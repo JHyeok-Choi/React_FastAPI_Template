@@ -73,7 +73,7 @@ def update_one(
         customer.customer_name
     )
 
-
+ 
 # DELETE
 @app.delete("/customers/{customer_id}")
 def delete_one(customer_id: int):

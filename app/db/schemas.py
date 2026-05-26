@@ -7,7 +7,7 @@ class CustomerCreate(BaseModel):
 
 class CustomerUpdate(BaseModel):
     customer_name: str
-
+ 
 
 class CustomerResponse(BaseModel):
     customer_id: int

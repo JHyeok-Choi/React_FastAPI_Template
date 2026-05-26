@@ -13,7 +13,7 @@ DB_SERVICE = os.getenv("DB_SERVICE")
 DATABASE_URL = (
     f"oracle+oracledb://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/?service_name={DB_SERVICE}"
 )
-
+ 
 engine = create_engine(
     DATABASE_URL,
     echo=True

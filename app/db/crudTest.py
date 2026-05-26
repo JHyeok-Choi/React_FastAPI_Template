@@ -61,7 +61,7 @@ def update_customer(customer_id: int, customer_name: str):
         "customer_name": customer_name
     }
 
-
+ 
 # DELETE
 def delete_customer(customer_id: int):
 
