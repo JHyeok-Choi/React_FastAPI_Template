@@ -48,3 +48,11 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      # 3. ⭐️ 오래된 비정식/Untagged 이미지 자동 청소 (용량 관리)
+      - name: Delete old images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: '${{ github.event.repository.name }}' # 청소할 패키지명
+          package-type: 'container'
+          min-versions-to-keep: 3 # ⭐️ 최신 3개 버전만 남기고 모두 삭제
+          delete-only-unreferenced-versions: true # ⭐️ 태그가 없는(Untagged) 이미지만 골라서 삭제
