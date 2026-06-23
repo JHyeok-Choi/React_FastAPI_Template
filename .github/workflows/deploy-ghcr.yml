@@ -42,7 +42,7 @@ jobs:
           # 이미지 태그 지정 (ghcr.io/소유자명/레포지토리명:최신버전 및 커밋샤)
           # 단, 소유자명(github.repository_owner)은 모두 소문자여야 하므로 주의가 필요할 수 있습니다.
           tags: |
-            ghcr.io/${{ github.repository_owner }}/React_FastAPI_Template:latest
-            ghcr.io/${{ github.repository_owner }}/React_FastAPI_Template:${{ github.sha }}
+            ghcr.io/${{ text.toLowerCase(github.repository_owner) }}/fastapi-app:latest
+            ghcr.io/${{ text.toLowerCase(github.repository_owner) }}/fastapi-app:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
