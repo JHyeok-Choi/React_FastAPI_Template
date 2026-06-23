@@ -3,28 +3,33 @@ name: Build and Push Docker Image to GHCR
 on:
   push:
     branches:
-      - main # main 브랜치에 푸시될 때 실행 (원하는 브랜치로 변경 가능)
+      - main
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     
-    # GHCR에 이미지를 푸시하기 위해 쓰기(write) 권한이 필수입니다.
     permissions:
       contents: read
       packages: write
 
     steps:
-      # 1. GitHub 레포지토리 코드 체크아웃
       - name: Checkout branch
         uses: actions/checkout@v4
 
-      # 2. Docker Buildx 설정 (멀티 플랫폼 빌드 및 캐싱 지원)
+      # 1. ⭐️ Docker 메타데이터 설정을 통해 대문자 계정명을 자동으로 소문자로 변환합니다.
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 3. GitHub Container Registry 로그인
-      # GitHub Actions 자체 토큰(GITHUB_TOKEN)을 사용하여 별도 비밀키 설정 없이 로그인합니다.
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -32,17 +37,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 4. Docker 이미지 빌드 및 GHCR 푸시
+      # 2. ⭐️ 변환된 태그를 사용하여 이미지를 안전하게 빌드 및 푸시합니다.
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./dockerfile
           push: true
-          # 이미지 태그 지정 (ghcr.io/소유자명/레포지토리명:최신버전 및 커밋샤)
-          # 단, 소유자명(github.repository_owner)은 모두 소문자여야 하므로 주의가 필요할 수 있습니다.
-          tags: |
-            ghcr.io/${{ text.toLowerCase(github.repository_owner) }}/fastapi-app:latest
-            ghcr.io/${{ text.toLowerCase(github.repository_owner) }}/fastapi-app:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
